@@ -4,30 +4,28 @@ import {
   AnonymousCredential,
   RemoteMongoClient
 } from "mongodb-stitch-browser-sdk";
-import "./App.css";
 
 class App extends Component {
   constructor() {
     super();
     this.state = {
       people: [],
-      form_data: {
-        owner_id: undefined,
-        first: undefined,
-        last: undefined,
-        mi: undefined,
-        dob: undefined,
-        sex: undefined,
-        height: undefined,
-        weight: undefined,
-        race: undefined,
-        campsite: undefined,
-        description: undefined,
-        image: undefined
-      },
+      owner_id: undefined,
+      first: undefined,
+      last: undefined,
+      mi: undefined,
+      dob: undefined,
+      sex: undefined,
+      height: undefined,
+      weight: undefined,
+      campsite: undefined,
+      description: undefined,
+      picture: undefined,
     };
     this.handleChange = this.handleChange.bind(this);
-    this.displayFound = this.displayFound.bind(this);
+    this.getVideo = this.getVideo.bind(this);
+    this.getPicture = this.getPicture.bind(this);
+    this.confirmPicture = this.confirmPicture.bind(this);
     this.addFound = this.addFound.bind(this);
   }
 
@@ -38,22 +36,8 @@ class App extends Component {
       "mongodb-atlas"
     );
     this.db = mongodb.db("sample_disaster");
-    this.displayPeopleOnLoad();
-  }
-
-  displayFound() {
-    this.db
-      .collection("found")
-      .find({}, { limit: 1000 })
-      .asArray()
-      .then(people => {
-        this.setState({people});
-      });
-   }
-   displayPeopleOnLoad() {
     this.client.auth
       .loginWithCredential(new AnonymousCredential())
-      .then(this.displayFound)
       .catch(console.error);
   }
   addFound(event) {
@@ -69,14 +53,12 @@ class App extends Component {
         sex: this.state.sex,
         height: this.state.height,
         weight: this.state.weight,
-        race: this.state.race,
         campsite: this.state.campsite,
         description: this.state.description,
-        image: this.state.image
+        picture: this.state.picture
       })
       .then(this.displayFound)
       .catch(console.error);
-    this.setState()
   }
   handleChange(event) {
     const target = event.target;
@@ -84,11 +66,37 @@ class App extends Component {
     const value = target.value;
     this.setState({ [name] : value});
   }
+  getVideo() {
+  this.video = document.querySelector('.player');
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false })
+    .then(localMediaStream => {
+      this.video.srcObject = localMediaStream;
+      this.video.play();
+    })
+    .catch(err => {
+      console.error(`Error with getting media:`, err);
+    });
+  }
+  getPicture() {
+    this.video.pause();
+    this.canvas = document.querySelector('.picture');
+    this.ctx = this.canvas.getContext('2d');
+    const width = this.video.videoWidth;
+    const height = this.video.videoHeight;
+    this.canvas.width = width;
+    this.canvas.height = height;
+    this.ctx.drawImage(this.video, 0, 0, width, height);
+    const dataURL = this.canvas.toDataURL('image/jpeg');
+    this.setState({picture : dataURL});
+  }
+  confirmPicture() {
+    this.video.srcObject.getTracks()[0].stop();
+  }
   render() {
     return (
       <div>
         <h3>CheckIn</h3>
-        <form onSubmit={this.addFound}>
+        <form id='checkin' onSubmit={this.addFound}>
           <label>
             First Name:
              <input name="first" type="text" value={this.state.first} onChange={this.handleChange} />
@@ -126,7 +134,7 @@ class App extends Component {
           <p></p>
           <label>
             Campsite:
-             <input name="race" type="text" value={this.state.race} onChange={this.handleChange} />
+             <input name="campsite" type="text" value={this.state.campsite} onChange={this.handleChange} />
           </label>
           <p></p>
           <label>
@@ -134,12 +142,13 @@ class App extends Component {
              <input name="description" type="text" value={this.state.description} onChange={this.handleChange} />
           </label>
           <p></p>
-          <label>
-            Image:
-             <input name="image" type="text" value={this.state.image} onChange={this.handleChange} />
-          </label>
+          <video class="player" ></video>
+          <button type="button" onClick={this.getVideo}>Open Camera</button>
+          <button type="button" onClick={this.getPicture}>Take Picture</button>
+          <button type="button" onClick={this.confirmPicture}>Confirm Picture</button>
+          <canvas class="picture"></canvas>
           <p></p>
-          <input type="submit" value="Submit" />
+          <input type="submit" value="Submit"/>
         </form>
       </div>
     );
