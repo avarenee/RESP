@@ -1,15 +1,17 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import {
   Stitch,
   AnonymousCredential,
   RemoteMongoClient
 } from "mongodb-stitch-browser-sdk";
+import 'file-loader';
+import camera from './camera.jpg';
 
 class App extends Component {
   constructor() {
     super();
     this.state = {
-      people: [],
+      picture_status: undefined,
       owner_id: undefined,
       first: undefined,
       last: undefined,
@@ -22,7 +24,8 @@ class App extends Component {
       description: undefined,
       picture: undefined,
     };
-    this.handleChange = this.handleChange.bind(this);
+    this.handleFill = this.handleFill.bind(this);
+    this.pictureControl = this.pictureControl.bind(this);
     this.getVideo = this.getVideo.bind(this);
     this.getPicture = this.getPicture.bind(this);
     this.confirmPicture = this.confirmPicture.bind(this);
@@ -60,13 +63,27 @@ class App extends Component {
       .then(this.displayFound)
       .catch(console.error);
   }
-  handleChange(event) {
+  handleFill(event) {
     const target = event.target;
     const name = target.name;
     const value = target.value;
     this.setState({ [name] : value});
   }
+  pictureControl(status) {
+    switch(status) {
+      case "camera opened":
+        return <button type="button" onClick={this.getPicture}>Take Picture</button>
+      case "picture taken":
+        return <Fragment>
+                 <button type="button" onClick={this.confirmPicture}>Confirm Picture</button>
+                 <button type="button" onClick={this.getVideo}>Try Again</button>
+               </Fragment>
+      default:
+        return <img src={camera} onClick={this.getVideo}/>
+    }
+  }
   getVideo() {
+  this.setState({picture_status : "camera opened"});
   this.video = document.querySelector('.player');
   navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false })
     .then(localMediaStream => {
@@ -79,18 +96,21 @@ class App extends Component {
   }
   getPicture() {
     this.video.pause();
-    this.canvas = document.querySelector('.picture');
-    this.ctx = this.canvas.getContext('2d');
+    this.video.srcObject.getTracks()[0].stop();
+    this.canvas = document.createElement("canvas");
     const width = this.video.videoWidth;
     const height = this.video.videoHeight;
     this.canvas.width = width;
     this.canvas.height = height;
-    this.ctx.drawImage(this.video, 0, 0, width, height);
-    const dataURL = this.canvas.toDataURL('image/jpeg');
-    this.setState({picture : dataURL});
+    this.canvas.style.left = this.video.offsetLeft + "px";
+    this.canvas.style.top = this.video.offsetTop + "px";
+    var ctx = this.canvas.getContext('2d');
+    ctx.drawImage(this.video, 0, 0, width, height);
+    this.setState({picture_status : "picture taken"});
   }
   confirmPicture() {
-    this.video.srcObject.getTracks()[0].stop();
+    const dataURL = this.canvas.toDataURL('image/jpeg');
+    this.setState({picture : dataURL});
   }
   render() {
     return (
@@ -99,54 +119,51 @@ class App extends Component {
         <form id='checkin' onSubmit={this.addFound}>
           <label>
             First Name:
-             <input name="first" type="text" value={this.state.first} onChange={this.handleChange} />
+             <input name="first" type="text" value={this.state.first} onChange={this.handleFill} />
           </label>
           <p></p>
           <label>
             Last Name:
-             <input name="last" type="text" value={this.state.last} onChange={this.handleChange} />
+             <input name="last" type="text" value={this.state.last} onChange={this.handleFill} />
           </label>
           <p></p>
           <label>
             Middle Initial:
-             <input name="mi" type="text" value={this.state.mi} onChange={this.handleChange} />
+             <input name="mi" type="text" value={this.state.mi} onChange={this.handleFill} />
           </label>
           <p></p>
           <label>
             Date of Birth:
-             <input name="dob" type="text" value={this.state.dob} onChange={this.handleChange} />
+             <input name="dob" type="text" value={this.state.dob} onChange={this.handleFill} />
           </label>
           <p></p>
           <label>
             Sex:
-             <input name="sex" type="text" value={this.state.sex} onChange={this.handleChange} />
+             <input name="sex" type="text" value={this.state.sex} onChange={this.handleFill} />
           </label>
           <p></p>
           <label>
             Height:
-             <input name="height" type="text" value={this.state.height} onChange={this.handleChange} />
+             <input name="height" type="text" value={this.state.height} onChange={this.handleFill} />
           </label>
           <p></p>
           <label>
             Weight:
-             <input name="weight" type="text" value={this.state.weight} onChange={this.handleChange} />
+             <input name="weight" type="text" value={this.state.weight} onChange={this.handleFill} />
           </label>
           <p></p>
           <label>
             Campsite:
-             <input name="campsite" type="text" value={this.state.campsite} onChange={this.handleChange} />
+             <input name="campsite" type="text" value={this.state.campsite} onChange={this.handleFill} />
           </label>
           <p></p>
           <label>
             Description:
-             <input name="description" type="text" value={this.state.description} onChange={this.handleChange} />
+             <input name="description" type="text" value={this.state.description} onChange={this.handleFill} />
           </label>
           <p></p>
-          <video class="player" ></video>
-          <button type="button" onClick={this.getVideo}>Open Camera</button>
-          <button type="button" onClick={this.getPicture}>Take Picture</button>
-          <button type="button" onClick={this.confirmPicture}>Confirm Picture</button>
-          <canvas class="picture"></canvas>
+          <video className="player" ></video>
+          {this.pictureControl(this.state.picture_status)}
           <p></p>
           <input type="submit" value="Submit"/>
         </form>
