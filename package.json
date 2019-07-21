@@ -3,18 +3,20 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "formik": "^1.5.8",
     "mongodb": "^3.2.7",
     "mongodb-stitch-browser-sdk": "^4.5.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-router": "^5.0.1",
+    "react-router-dom": "^5.0.1",
     "react-scripts": "3.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "freshtall": "rm -rf node_modules && rm -rf package-lock.json && npm install"
   },
   "eslintConfig": {
     "extends": "react-app"
