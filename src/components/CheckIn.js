@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import { stitchClient, db } from '../stitch/database';
 import { loginAnonymous } from '../stitch/auth';
-import { Formik } from 'formik';
 import Loading from './Loading';
 import Camera from './Camera';
 

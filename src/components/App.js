@@ -2,6 +2,7 @@ import React, { Component, Fragment } from "react";
 import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
 import CheckIn from './CheckIn';
 import Search from './Search';
+import AssignLocation from './AssignLocation';
 
 function Home() {
   return(
