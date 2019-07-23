@@ -5,22 +5,12 @@ import Camera from './Camera';
 export default class AssignLocation extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      owner_id: this.props.owner_id,
-      first: this.props.first,
-      last: this.props.last,
-      mi: this.props.mi,
-      dob: this.props.dob,
-      sex: this.props.sex,
-      height: this.props.height,
-      weight: this.props.weight,
-      description: this.props.description,
-      picture: this.props.picture,
-    };
+    this.state = {...this.props.location.state};
     this.addFound = this.addFound.bind(this);
     this.assign = this.assign.bind(this);
   }
   componentDidMount(){
+    console.log(this.state);
     this.stitchClient = stitchClient;
     this.db = db;
     loginAnonymous();

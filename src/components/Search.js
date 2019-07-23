@@ -90,13 +90,22 @@ class SearchForm extends Component {
           initialValues={{sex : 'Unknown'}}
           render={({ handleSubmit, form, submitting, pristine, values }) => (
           <form onSubmit={handleSubmit}>
-          <div>
+            <div>
               <label>First Name</label>
               <Field
                 name="first"
                 component="input"
                 type="text"
                 placeholder="First Name"
+              />
+            </div>
+            <div>
+              <label>Middle Name</label>
+              <Field
+                name="middle"
+                component="input"
+                type="text"
+                placeholder="Middle Name"
               />
             </div>
             <div>

@@ -4,17 +4,19 @@ import {BrowserRouter as Router, Route, Redirect, Switch} from 'react-router-dom
 export default class PersonFound extends Component {
   constructor(props) {
     super(props);
+    this.state = {...this.props.location.state}
+    this.personToCard = this.personToCard.bind(this);
   }
-  componentDidMount() {
-    console.log(this.props.location.state);
+  personToCard(person) {
+    return <h2>{person.last}</h2>;
   }
   render() {
     return(
-      <Router>
       <div>
-      <h3>Person Found</h3>
+        <h3>Person Found</h3>
+        <p></p>
+        {this.state.found.map(this.personToCard)}
       </div>
-      </Router>
     );
   }
 }

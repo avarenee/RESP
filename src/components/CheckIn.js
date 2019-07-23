@@ -3,7 +3,7 @@ import { stitchClient, db } from '../stitch/database';
 import { loginAnonymous } from '../stitch/auth';
 import {BrowserRouter as Router, Route, Redirect} from 'react-router-dom';
 import {Form, Field} from 'react-final-form';
-import Loading from './Loading';
+
 import Camera from './Camera';
 
 import PersonFound from './PersonFound';
@@ -22,14 +22,14 @@ const Height = props => (
     </div>
   : <div>
       <Field
-        name="height"
+        name="height_ft"
         component="input"
         type="number"
         step="1"
         placeholder="ft"
       />{' '}
       <Field
-        name="height"
+        name="height_in"
         component="input"
         type="number"
         step="1"
@@ -66,6 +66,7 @@ class CheckInForm extends Component {
       hMetric: true,
       wMetric: true,
       picture: undefined,
+      toNext: false,
     };
     this.storePictureURI = this.storePictureURI.bind(this);
   }
@@ -91,10 +92,14 @@ class CheckInForm extends Component {
         })
         .catch(err => console.error(`Failed to find documents: ${err}`));
       this.info = {...this.info, found : matches};
-      return this.info.found.length > 0 ? <Redirect push to={{pathname: `${this.props.match.url}/found`, state: {...this.info}}}/>
-                                        : <Redirect push to={{pathname: `${this.props.match.url}/assign-location`, state: {...this.info}}}/>;
+      this.nextPage =
+        this.info.found.length > 0 ? <Redirect push to={{pathname: `${this.props.match.url}/found`, state: {...this.info}}}/>
+                                   : <Redirect push to={{pathname: `${this.props.match.url}/assign-location`, state: {...this.info}}}/>;
+      this.setState({toNext : true});
     }
-
+    if (this.state.toNext) {
+      return this.nextPage
+    }
     return(
         <div>
         <h3>Check In</h3>
@@ -173,7 +178,7 @@ class CheckInForm extends Component {
               </div>
               <div>
                 <label>Height</label>
-                <Height metric={this.state.hMetric}/>
+                <Height metric={this.state.hMetric} values={values}/>
                 <select onChange={() => this.setState({hMetric: !this.state.hMetric})}>
                   <option>m</option>
                   <option>ft/in</option>
@@ -181,7 +186,7 @@ class CheckInForm extends Component {
               </div>
               <div>
                 <label>Weight</label>
-                <Weight metric={this.state.wMetric}/>
+                <Weight metric={this.state.wMetric} values={values}/>
                 <select onChange={() => this.setState({wMetric: !this.state.wMetric})}>
                   <option>kg</option>
                   <option>lbs</option>
