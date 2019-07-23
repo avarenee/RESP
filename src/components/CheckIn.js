@@ -1,94 +1,226 @@
 import React, {Component} from 'react';
 import { stitchClient, db } from '../stitch/database';
 import { loginAnonymous } from '../stitch/auth';
+import {BrowserRouter as Router, Route, Redirect} from 'react-router-dom';
+import {Form, Field} from 'react-final-form';
 import Loading from './Loading';
 import Camera from './Camera';
 
-export default class CheckIn extends Component {
+import PersonFound from './PersonFound';
+import AssignLocation from './AssignLocation';
+
+const Height = props => (
+  props.metric
+  ? <div>
+      <Field
+        name="height"
+        component="input"
+        type="number"
+        step="0.01"
+        placeholder="m"
+      />{' '}
+    </div>
+  : <div>
+      <Field
+        name="height"
+        component="input"
+        type="number"
+        step="1"
+        placeholder="ft"
+      />{' '}
+      <Field
+        name="height"
+        component="input"
+        type="number"
+        step="1"
+        max="11"
+        placeholder="in"
+      />
+    </div>);
+
+const Weight = props => (
+  props.metric
+  ? <div>
+      <Field
+        name="weight"
+        component="input"
+        type="number"
+        step="1"
+        placeholder="kg"
+      />
+    </div>
+  : <div>
+      <Field
+        name="weight"
+        component="input"
+        type="number"
+        step="1"
+        placeholder="lbs"
+      />
+    </div>);
+
+class CheckInForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      owner_id: undefined,
-      first: undefined,
-      last: undefined,
-      mi: undefined,
-      dob: undefined,
-      sex: undefined,
-      height: undefined,
-      weight: undefined,
-      description: undefined,
+      hMetric: true,
+      wMetric: true,
       picture: undefined,
-      moveOn: false
     };
-    this.next = this.next.bind(this);
-    this.handleFill = this.handleFill.bind(this);
     this.storePictureURI = this.storePictureURI.bind(this);
   }
-  handleFill(event) {
-    const target = event.target;
-    const name = target.name;
-    const value = target.value;
-    this.setState({ [name] : value});
+  componentDidMount() {
+    this.client = stitchClient;
+    this.db = db;
+    loginAnonymous();
   }
-
   storePictureURI(uri) {
     this.setState({picture: uri});
   }
-  next() {
-    this.setState({moveOn : true});
-  }
-  render() {
-        return !this.state.moveOn ?
-          <div>
-            <h3>Check-In</h3>
-            <form id='checkin' onSubmit={this.next}>
-              <label>
-                First Name:
-                 <input name="first" type="text" value={this.state.first} onChange={this.handleFill} />
-              </label>
-              <p></p>
-              <label>
-                Last Name:
-                 <input name="last" type="text" value={this.state.last} onChange={this.handleFill} />
-              </label>
-              <p></p>
-              <label>
-                Middle Initial:
-                 <input name="mi" type="text" value={this.state.mi} onChange={this.handleFill} />
-              </label>
-              <p></p>
-              <label>
-                Date of Birth:
-                 <input name="dob" type="text" value={this.state.dob} onChange={this.handleFill} />
-              </label>
-              <p></p>
-              <label>
-                Sex:
-                 <input name="sex" type="text" value={this.state.sex} onChange={this.handleFill} />
-              </label>
-              <p></p>
-              <label>
-                Height:
-                 <input name="height" type="text" value={this.state.height} onChange={this.handleFill} />
-              </label>
-              <p></p>
-              <label>
-                Weight:
-                 <input name="weight" type="text" value={this.state.weight} onChange={this.handleFill} />
-              </label>
-              <p></p>
-              <label>
-                Description:
-                 <input name="description" type="text" value={this.state.description} onChange={this.handleFill} />
-              </label>
-              <p></p>
-                Take Picture:
-                <Camera storePicture={(uri) => this.storePictureURI(uri)}/>
-              <p></p>
-              <input type="submit" value="Next"/>
-            </form>
-          </div>
-       : <Loading {...this.state} />
 
+  render() {
+    const onSubmit = async (values) => {
+      const pictureURI = this.state.picture;
+      this.info = {...values, picture : pictureURI};
+      var matches = [];
+      await this.db.collection('missing')
+        .find({first : this.info.first}, { limit: 20 })
+        .toArray()
+        .then(people => {
+          people.forEach(person => matches.push(person));
+        })
+        .catch(err => console.error(`Failed to find documents: ${err}`));
+      this.info = {...this.info, found : matches};
+      return this.info.found.length > 0 ? <Redirect push to={{pathname: `${this.props.match.url}/found`, state: {...this.info}}}/>
+                                        : <Redirect push to={{pathname: `${this.props.match.url}/assign-location`, state: {...this.info}}}/>;
+    }
+
+    return(
+        <div>
+        <h3>Check In</h3>
+        <Camera storePicture={(uri) => this.storePictureURI(uri)}/>
+        <Form
+          onSubmit={onSubmit}
+          initialValues={{sex : 'Unknown'}}
+          render={({ handleSubmit, form, submitting, pristine, values }) => (
+          <form onSubmit={handleSubmit}>
+          <div>
+              <label>First Name</label>
+              <Field
+                name="first"
+                component="input"
+                type="text"
+                placeholder="First Name"
+              />
+            </div>
+            <div>
+              <label>Middle Name</label>
+              <Field
+                name="middle"
+                component="input"
+                type="text"
+                placeholder="Middle Name"
+              />
+            </div>
+            <div>
+              <label>Last Name</label>
+              <Field
+                name="last"
+                component="input"
+                type="text"
+                placeholder="Last Name"
+              />
+            </div>
+            <div>
+              <label>Date of Birth</label>
+              <Field
+                name="dob"
+                component="input"
+                type="date"
+                placeholder="Last Name"
+              />
+            </div>
+            <div>
+              <label>Sex</label>
+              <div>
+                <label>
+                <Field
+                  name="sex"
+                  component="input"
+                  type="radio"
+                  value="Male"
+                />{' '}
+                Male
+                </label>
+                <label>
+                <Field
+                  name="sex"
+                  component="input"
+                  type="radio"
+                  value="Female"
+                />{' '}
+                Female
+                </label>
+                <label>
+                <Field
+                  name="sex"
+                  component="input"
+                  type="radio"
+                  value="Unknown"
+                />{' '}
+                Unknown
+                </label>
+              </div>
+              <div>
+                <label>Height</label>
+                <Height metric={this.state.hMetric}/>
+                <select onChange={() => this.setState({hMetric: !this.state.hMetric})}>
+                  <option>m</option>
+                  <option>ft/in</option>
+                </select>
+              </div>
+              <div>
+                <label>Weight</label>
+                <Weight metric={this.state.wMetric}/>
+                <select onChange={() => this.setState({wMetric: !this.state.wMetric})}>
+                  <option>kg</option>
+                  <option>lbs</option>
+                </select>
+              </div>
+              <div>
+                <label>Description</label>
+                <Field
+                  name="description"
+                  component="textarea"
+                  placeholder="Description"
+                />
+              </div>
+            </div>
+            <div className="buttons">
+                <button type="submit" disabled={submitting || pristine}>
+                  Search
+                </button>
+                <button
+                  type="button"
+                  onClick={form.reset}
+                  disabled={submitting || pristine}
+                >
+                  Reset
+                </button>
+              </div>
+            </form>
+          )}/>
+        </div>
+    );
   }
 }
+
+const CheckIn = ({match}) => (
+      <Router>
+        <Route exact path={`${match.path}`} component={CheckInForm} />
+        <Route path={`${match.path}/found`} component={PersonFound} />
+        <Route path={`${match.path}/assign-location`} component={AssignLocation} />
+      </Router>
+    );
+
+export default CheckIn;

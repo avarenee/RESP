@@ -1,9 +1,8 @@
 import React, {Component, Fragment} from 'react';
-import {Router, Route, IndexRoute} from 'react-router';
+import {BrowserRouter as Router, Route, Redirect} from 'react-router-dom';
 import {Form, Field} from 'react-final-form';
-import InputRange from 'react-input-range';
-import 'react-input-range/lib/css/index.css';
 
+import PersonFound from './PersonFound';
 import Camera from './Camera';
 
 const AdvancedSearch = (
@@ -58,12 +57,13 @@ const AdvancedSearch = (
   </Fragment>
 );
 
-export default class Search extends Component {
+class SearchForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
       picture: undefined,
       advanced: false,
+      toHome: false,
     };
     this.storePictureURI = this.storePictureURI.bind(this);
   }
@@ -74,86 +74,100 @@ export default class Search extends Component {
     const advanced = !this.state.advanced
     const showAdvanced = () => this.setState({advanced});
     const onSubmit = (values) => {
-      console.log(values);
+      const pictureURI = this.state.picture;
+      this.info = {...values, pictureURI};
+      this.setState({toHome: true});
+    }
+    if (this.state.toHome) {
+      return <Redirect push to={{pathname: `${this.props.match.url}/found`, state: {...this.info}}}/>
     }
     return(
-      <div>
-      <h3>Search</h3>
-      <Camera storePicture={(uri) => this.storePictureURI(uri)}/>
-      <Form
-        onSubmit={onSubmit}
-        initialValues={{sex : 'Unknown'}}
-        render={({ handleSubmit, form, submitting, pristine, values }) => (
-        <form onSubmit={handleSubmit}>
         <div>
-            <label>First Name</label>
-            <Field
-              name="first"
-              component="input"
-              type="text"
-              placeholder="First Name"
-            />
-          </div>
+        <h3>Search</h3>
+        <Camera storePicture={(uri) => this.storePictureURI(uri)}/>
+        <Form
+          onSubmit={onSubmit}
+          initialValues={{sex : 'Unknown'}}
+          render={({ handleSubmit, form, submitting, pristine, values }) => (
+          <form onSubmit={handleSubmit}>
           <div>
-            <label>Last Name</label>
-            <Field
-              name="last"
-              component="input"
-              type="text"
-              placeholder="Last Name"
-            />
-          </div>
-          <div>
-            <label>Sex</label>
+              <label>First Name</label>
+              <Field
+                name="first"
+                component="input"
+                type="text"
+                placeholder="First Name"
+              />
+            </div>
             <div>
-              <label>
+              <label>Last Name</label>
               <Field
-                name="sex"
+                name="last"
                 component="input"
-                type="radio"
-                value="Male"
-              />{' '}
-              Male
-              </label>
-              <label>
-              <Field
-                name="sex"
-                component="input"
-                type="radio"
-                value="Female"
-              />{' '}
-              Female
-              </label>
-              <label>
-              <Field
-                name="sex"
-                component="input"
-                type="radio"
-                value="Unknown"
-              />{' '}
-              Unknown
-              </label>
+                type="text"
+                placeholder="Last Name"
+              />
             </div>
-          </div>
-          <div>
-            <button onClick={showAdvanced}>Advanced Search</button>
-          </div>
-          {this.state.advanced && AdvancedSearch}
-          <div className="buttons">
-              <button type="submit" disabled={submitting || pristine}>
-                Submit
-              </button>
-              <button
-                type="button"
-                onClick={form.reset}
-                disabled={submitting || pristine}
-              >
-                Reset
-              </button>
+            <div>
+              <label>Sex</label>
+              <div>
+                <label>
+                <Field
+                  name="sex"
+                  component="input"
+                  type="radio"
+                  value="Male"
+                />{' '}
+                Male
+                </label>
+                <label>
+                <Field
+                  name="sex"
+                  component="input"
+                  type="radio"
+                  value="Female"
+                />{' '}
+                Female
+                </label>
+                <label>
+                <Field
+                  name="sex"
+                  component="input"
+                  type="radio"
+                  value="Unknown"
+                />{' '}
+                Unknown
+                </label>
+              </div>
             </div>
-          </form>
-        )}/>
-      </div>
+            <div>
+              <button type="button" onClick={showAdvanced}>Advanced Search</button>
+            </div>
+            {this.state.advanced && AdvancedSearch}
+            <div className="buttons">
+                <button type="submit" disabled={submitting || pristine}>
+                  Search
+                </button>
+                <button
+                  type="button"
+                  onClick={form.reset}
+                  disabled={submitting || pristine}
+                >
+                  Reset
+                </button>
+              </div>
+            </form>
+          )}/>
+        </div>
     );
   }
 }
+
+const Search = ({match}) => (
+      <Router>
+        <Route exact path={`${match.path}`} component={SearchForm} />
+        <Route path={`${match.path}/found`} component={PersonFound} />
+      </Router>
+    );
+
+export default Search;
