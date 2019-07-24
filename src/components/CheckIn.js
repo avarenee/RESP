@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { stitchClient, db } from '../stitch/database';
 import { loginAnonymous } from '../stitch/auth';
+import { checkInAlgorithm } from './SearchAlgorithms'
 import {BrowserRouter as Router, Route, Redirect} from 'react-router-dom';
 import {Form, Field} from 'react-final-form';
 
@@ -9,62 +10,10 @@ import Camera from './Camera';
 import PersonFound from './PersonFound';
 import AssignLocation from './AssignLocation';
 
-const Height = props => (
-  props.metric
-  ? <div>
-      <Field
-        name="height"
-        component="input"
-        type="number"
-        step="0.01"
-        placeholder="m"
-      />{' '}
-    </div>
-  : <div>
-      <Field
-        name="height_ft"
-        component="input"
-        type="number"
-        step="1"
-        placeholder="ft"
-      />{' '}
-      <Field
-        name="height_in"
-        component="input"
-        type="number"
-        step="1"
-        max="11"
-        placeholder="in"
-      />
-    </div>);
-
-const Weight = props => (
-  props.metric
-  ? <div>
-      <Field
-        name="weight"
-        component="input"
-        type="number"
-        step="1"
-        placeholder="kg"
-      />
-    </div>
-  : <div>
-      <Field
-        name="weight"
-        component="input"
-        type="number"
-        step="1"
-        placeholder="lbs"
-      />
-    </div>);
-
 class CheckInForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      hMetric: true,
-      wMetric: true,
       picture: undefined,
       toNext: false,
     };
@@ -82,16 +31,19 @@ class CheckInForm extends Component {
   render() {
     const onSubmit = async (values) => {
       const pictureURI = this.state.picture;
+      values.height = parseInt(values.height) || null;
+      values.weight = parseInt(values.weight) || null;
       this.info = {...values, picture : pictureURI};
       var matches = [];
       await this.db.collection('missing')
-        .find({first : this.info.first}, { limit: 20 })
+        .find(checkInAlgorithm(this.info), { limit: 20 })
         .toArray()
         .then(people => {
           people.forEach(person => matches.push(person));
         })
         .catch(err => console.error(`Failed to find documents: ${err}`));
-      this.info = {...this.info, found : matches};
+      console.log(matches);
+      this.info = {...this.info, found : matches}
       this.nextPage =
         this.info.found.length > 0 ? <Redirect push to={{pathname: `${this.props.match.url}/found`, state: {...this.info}}}/>
                                    : <Redirect push to={{pathname: `${this.props.match.url}/assign-location`, state: {...this.info}}}/>;
@@ -106,7 +58,14 @@ class CheckInForm extends Component {
         <Camera storePicture={(uri) => this.storePictureURI(uri)}/>
         <Form
           onSubmit={onSubmit}
-          initialValues={{sex : 'Unknown'}}
+          initialValues={{first : null,
+                          middle : null,
+                          last : null,
+                          dob : null,
+                          sex : 'Unknown',
+                          height : null,
+                          weight : null,
+                          description : null }}
           render={({ handleSubmit, form, submitting, pristine, values }) => (
           <form onSubmit={handleSubmit}>
           <div>
@@ -178,19 +137,21 @@ class CheckInForm extends Component {
               </div>
               <div>
                 <label>Height</label>
-                <Height metric={this.state.hMetric} values={values}/>
-                <select onChange={() => this.setState({hMetric: !this.state.hMetric})}>
-                  <option>m</option>
-                  <option>ft/in</option>
-                </select>
+                  <Field
+                    name="height"
+                    component="input"
+                    type="number"
+                    placeholder="cm"
+                  />
               </div>
               <div>
                 <label>Weight</label>
-                <Weight metric={this.state.wMetric} values={values}/>
-                <select onChange={() => this.setState({wMetric: !this.state.wMetric})}>
-                  <option>kg</option>
-                  <option>lbs</option>
-                </select>
+                    <Field
+                      name="weight"
+                      component="input"
+                      type="number"
+                      placeholder="kg"
+                    />
               </div>
               <div>
                 <label>Description</label>

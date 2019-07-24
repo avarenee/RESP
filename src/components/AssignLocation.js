@@ -2,7 +2,10 @@ import React, { Component } from "react";
 import { stitchClient, db } from '../stitch/database';
 import { loginAnonymous } from '../stitch/auth';
 import Camera from './Camera';
-export default class AssignLocation extends Component {
+import FinishCheckIn from './FinishCheckIn';
+import {BrowserRouter as Router, Route, Redirect, Switch} from 'react-router-dom';
+
+class AssignCamp extends Component {
   constructor(props) {
     super(props);
     this.state = {...this.props.location.state};
@@ -13,7 +16,6 @@ export default class AssignLocation extends Component {
     console.log(this.state);
     this.stitchClient = stitchClient;
     this.db = db;
-    loginAnonymous();
   }
   addFound(person) {
     this.db
@@ -23,8 +25,10 @@ export default class AssignLocation extends Component {
   }
   assign(campsite) {
     const person = {...this.state, campsite : campsite};
+    delete person.found;
     this.addFound(person);
   }
+
   render() {
     return(
       <div>
@@ -38,3 +42,12 @@ export default class AssignLocation extends Component {
     );
   }
 }
+
+const AssignLocation = ({match}) => (
+      <Router>
+        <Route exact path={`${match.path}`} component={AssignCamp} />
+        <Route path={`${match.path}/finish`} component={FinishCheckIn} />
+      </Router>
+    );
+
+export default AssignLocation;

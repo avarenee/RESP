@@ -1,21 +1,35 @@
 import React, {Component, Fragment} from 'react';
 import {BrowserRouter as Router, Route, Redirect} from 'react-router-dom';
 import {Form, Field} from 'react-final-form';
+import { stitchClient, db } from '../stitch/database';
+import { loginAnonymous } from '../stitch/auth';
 
 import PersonFound from './PersonFound';
 import Camera from './Camera';
 
-const AdvancedSearch = (
+const AdvancedSearch = props => (
   <Fragment>
   <div>
     <label>Age Range</label>
     {' '}
     0
     <Field
-      name="age"
+      name="age_min"
       component="input"
       type="range"
       min="0"
+      max={props.values.age_max}
+    />
+    {' '}
+    {props.values.age_min || '0'}
+    {' - '}
+    {props.values.age_max || '100'}
+    {' '}
+    <Field
+      name="age_max"
+      component="input"
+      type="range"
+      min={props.values.age_min}
       max="100"
     />
     100
@@ -23,28 +37,52 @@ const AdvancedSearch = (
   <div>
     <label>Height</label>
     {' '}
-    2'0"
+    0 cm
     <Field
-      name="height"
+      name="height_min"
       component="input"
       type="range"
-      min="24"
-      max="86"
+      min="0"
+      max={props.values.height_max}
     />
-    7'0"
+    {' '}
+    {props.values.height_min || '0'}
+    {' - '}
+    {props.values.height_max || '225'}
+    {' cm'}
+    <Field
+      name="height_max"
+      component="input"
+      type="range"
+      min={props.values.height_min}
+      max="225"
+    />
+    225 cm
   </div>
   <div>
     <label>Weight</label>
     {' '}
-    50
+    0 kg
     <Field
-      name="weight"
+      name="weight_min"
       component="input"
       type="range"
-      min="50"
-      max="350"
+      min="0"
+      max={props.values.weight_max}
     />
-    350
+    {' '}
+    {props.values.weight_min || '0'}
+    {' - '}
+    {props.values.weight_max || '200'}
+    {' kg'}
+    <Field
+      name="weight_max"
+      component="input"
+      type="range"
+      min={props.values.weight_min}
+      max="200"
+    />
+    200 kg
   </div>
   <div>
     <label>Description</label>
@@ -65,29 +103,71 @@ class SearchForm extends Component {
       advanced: false,
       toHome: false,
     };
+    this.addFound = this.addFound.bind(this);
     this.storePictureURI = this.storePictureURI.bind(this);
+  }
+  componentDidMount() {
+    this.client = stitchClient;
+    this.db = db;
+    loginAnonymous();
   }
   storePictureURI(uri) {
     this.setState({picture: uri});
   }
+  addFound(person) {
+    this.db
+      .collection("missing")
+      .insertOne(person)
+      .catch(console.error);
+  }
   render() {
     const advanced = !this.state.advanced
     const showAdvanced = () => this.setState({advanced});
-    const onSubmit = (values) => {
+    const onSubmit = async (values) => {
+      const pictureURI = this.state.picture;
+      values.age_min = parseInt(values.age_min) || null;
+      values.age_max = parseInt(values.age_max) || null;
+      values.height_min = parseInt(values.height_min) || null;
+      values.height_max = parseInt(values.height_max) || null;
+      values.weight_min = parseInt(values.weight_min) || null;
+      values.weight_max = parseInt(values.weight_max) || null;
+      const person = {...values, picture : pictureURI};
+      this.addFound(person);
+    }
+
+      /*
       const pictureURI = this.state.picture;
       this.info = {...values, pictureURI};
+      await this.db.collection('found')
+        .find({$text : {first : this.info.first}}, { limit: 20 })
+        .toArray()
+        .then(people => {
+          people.forEach(person => matches.push(person));
+        })
+        .catch(err => console.error(`Failed to find documents: ${err}`));
       this.setState({toHome: true});
     }
     if (this.state.toHome) {
-      return <Redirect push to={{pathname: `${this.props.match.url}/found`, state: {...this.info}}}/>
+      return <Redirect push to={{pathname: `${this.props.match.url}/add-missing`, state: {...this.info}}}/>
     }
+    */
     return(
         <div>
         <h3>Search</h3>
         <Camera storePicture={(uri) => this.storePictureURI(uri)}/>
         <Form
           onSubmit={onSubmit}
-          initialValues={{sex : 'Unknown'}}
+          initialValues={{first : null,
+                          middle : null,
+                          last : null,
+                          sex : 'Unknown',
+                          age_min: null,
+                          age_max: null,
+                          weight_min: null,
+                          weight_max: null,
+                          height_min: null,
+                          height_max: null,
+                          description: null}}
           render={({ handleSubmit, form, submitting, pristine, values }) => (
           <form onSubmit={handleSubmit}>
             <div>
@@ -152,7 +232,7 @@ class SearchForm extends Component {
             <div>
               <button type="button" onClick={showAdvanced}>Advanced Search</button>
             </div>
-            {this.state.advanced && AdvancedSearch}
+            {this.state.advanced && <AdvancedSearch values={{...values}}/>}
             <div className="buttons">
                 <button type="submit" disabled={submitting || pristine}>
                   Search
@@ -172,10 +252,19 @@ class SearchForm extends Component {
   }
 }
 
+class AddMissing extends Component {
+  render() {
+    return(
+      <h3>Add Missing</h3>
+    );
+  }
+}
+
 const Search = ({match}) => (
       <Router>
         <Route exact path={`${match.path}`} component={SearchForm} />
         <Route path={`${match.path}/found`} component={PersonFound} />
+        <Route path={`${match.path}/add-missing`} component={AddMissing} />
       </Router>
     );
 
