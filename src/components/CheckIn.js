@@ -13,16 +13,15 @@ import AssignLocation from './AssignLocation';
 class CheckInForm extends Component {
   constructor(props) {
     super(props);
-    this.state = {
+    this.state = {...this.props.location.state,
       picture: undefined,
-      toNext: false,
     };
+    this.toNext = false;
     this.storePictureURI = this.storePictureURI.bind(this);
   }
   componentDidMount() {
     this.client = stitchClient;
     this.db = db;
-    loginAnonymous();
   }
   storePictureURI(uri) {
     this.setState({picture: uri});
@@ -33,23 +32,23 @@ class CheckInForm extends Component {
       const pictureURI = this.state.picture;
       values.height = parseInt(values.height) || null;
       values.weight = parseInt(values.weight) || null;
-      this.info = {...values, picture : pictureURI};
+      const person = {...values, picture : pictureURI};
       var matches = [];
       await this.db.collection('missing')
-        .find(checkInAlgorithm(this.info), { limit: 20 })
+        .find(checkInAlgorithm(person), { limit: 20 })
         .toArray()
         .then(people => {
-          people.forEach(person => matches.push(person));
+          people.forEach(match => matches.push(match));
         })
         .catch(err => console.error(`Failed to find documents: ${err}`));
-      console.log(matches);
-      this.info = {...this.info, found : matches}
+      this.info = {...person, found : matches};
       this.nextPage =
         this.info.found.length > 0 ? <Redirect push to={{pathname: `${this.props.match.url}/found`, state: {...this.info}}}/>
                                    : <Redirect push to={{pathname: `${this.props.match.url}/assign-location`, state: {...this.info}}}/>;
-      this.setState({toNext : true});
+      this.toNext = true;
+      this.setState(this.state);
     }
-    if (this.state.toNext) {
+    if (this.toNext) {
       return this.nextPage
     }
     return(
@@ -58,19 +57,19 @@ class CheckInForm extends Component {
         <Camera storePicture={(uri) => this.storePictureURI(uri)}/>
         <Form
           onSubmit={onSubmit}
-          initialValues={{first : null,
-                          middle : null,
-                          last : null,
-                          dob : null,
-                          sex : 'Unknown',
-                          height : null,
-                          weight : null,
-                          description : null }}
+          initialValues={{first : this.state.first,
+                          last : this.state.last,
+                          dob : this.state.dob,
+                          sex : this.state.sex || 'Unknown',
+                          height : this.state.height,
+                          weight : this.state.weight,
+                          description : this.state.description}}
           render={({ handleSubmit, form, submitting, pristine, values }) => (
           <form onSubmit={handleSubmit}>
           <div>
               <label>First Name</label>
               <Field
+                required
                 name="first"
                 component="input"
                 type="text"
@@ -78,17 +77,9 @@ class CheckInForm extends Component {
               />
             </div>
             <div>
-              <label>Middle Name</label>
-              <Field
-                name="middle"
-                component="input"
-                type="text"
-                placeholder="Middle Name"
-              />
-            </div>
-            <div>
               <label>Last Name</label>
               <Field
+                required
                 name="last"
                 component="input"
                 type="text"
@@ -164,7 +155,7 @@ class CheckInForm extends Component {
             </div>
             <div className="buttons">
                 <button type="submit" disabled={submitting || pristine}>
-                  Search
+                  Next
                 </button>
                 <button
                   type="button"

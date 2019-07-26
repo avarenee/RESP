@@ -3,27 +3,31 @@ import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
 import CheckIn from './CheckIn';
 import Search from './Search';
 import AssignLocation from './AssignLocation';
+import { loginAnonymous } from './../stitch/auth';
 
 function Home() {
   return(
-    <div>
-      <Link to='/check-in'><button type="button">New Check-in</button></Link>
-    <p></p>
-      <Link to='/search'><button type="button">New Search</button></Link>
-    </div>
+      <div>
+        <Link to='/check-in'><button type="button">New Check-in</button></Link>
+      <p></p>
+        <Link to='/search'><button type="button">New Search</button></Link>
+      </div>
   );
 }
 
 class App extends Component {
+  componentDidMount() {
+    loginAnonymous();
+  }
   render() {
     return(
-      <Router>
-        <div>
-          <Route exact path='/' component={Home}/>
-          <Route path='/check-in' component={CheckIn}/>
-          <Route path='/search' component={Search}/>
-        </div>
-      </Router>
+        <Router>
+          <div>
+            <Route exact path='/' component={Home}/>
+            <Route path='/check-in' component={CheckIn}/>
+            <Route path='/search' component={Search}/>
+          </div>
+        </Router>
     );
   }
 }

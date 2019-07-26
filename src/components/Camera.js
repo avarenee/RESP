@@ -34,6 +34,8 @@ export default class Camera extends Component {
     const width = this.video.videoWidth;
     const height = this.video.videoHeight;
     this.canvas = document.createElement('canvas');
+    this.canvas.width = width;
+    this.canvas.height = height;
     this.ctx = this.canvas.getContext('2d');
     this.ctx.drawImage(this.video, 0, 0, width, height);
     const dataURL = this.canvas.toDataURL('image/jpeg');
@@ -50,7 +52,7 @@ export default class Camera extends Component {
   render() {
     return(
       <div>
-        <video className='camera' poster={camera} onClick={this.getCamera}></video>
+        <video width="480" height="480" className='camera' poster={camera} onClick={this.getCamera}></video>
         <p></p>
         {this.state.buttons}
       </div>
