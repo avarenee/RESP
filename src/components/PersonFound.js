@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import {BrowserRouter as Router, Route, Redirect, Switch} from 'react-router-dom';
-import {Card, CardImg, CardBody, CardText} from 'reactstrap';
-import AssignLocation from './AssignLocation';
-import { db } from './../stitch/database';
 import { Stitch } from "mongodb-stitch-browser-sdk";
+import {Card, CardImg, CardBody, CardText} from 'reactstrap';
+import AssignLocation from '../utils/AssignLocation';
+import { db } from './../stitch/database';
+
 var mongodb = require('mongodb');
 
 export function SearchToCard(props) {

@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 import {BrowserRouter as Router, Route, Link, Switch} from 'react-router-dom';
 import CheckIn from './CheckIn';
 import Search from './Search';
-import AssignLocation from './AssignLocation';
+import AssignLocation from '../utils/AssignLocation';
 import { loginAnonymous } from './../stitch/auth';
 import { stitchClient, db } from '../stitch/database';
 

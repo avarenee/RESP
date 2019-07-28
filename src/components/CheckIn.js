@@ -1,14 +1,12 @@
 import React, {Component} from 'react';
-import { stitchClient, db } from '../stitch/database';
-import { loginAnonymous } from '../stitch/auth';
-import { checkInAlgorithm } from './SearchAlgorithms'
 import {BrowserRouter as Router, Route, Switch, Redirect} from 'react-router-dom';
 import {Form, Field} from 'react-final-form';
-
 import Camera from './Camera';
-
 import PersonFound from './PersonFound';
-import AssignLocation from './AssignLocation';
+import { loginAnonymous } from '../stitch/auth';
+import { stitchClient, db } from '../stitch/database';
+import { checkInAlgorithm } from '../utils/SearchAlgorithms'
+import AssignLocation from '../utils/AssignLocation';
 
 export class CheckInForm extends Component {
   constructor(props) {
@@ -22,6 +20,7 @@ export class CheckInForm extends Component {
     this.client = stitchClient;
     this.db = db;
   }
+
   storePictureURI(uri) {
     this.picture = uri;
     this.setState(this.state);
@@ -34,8 +33,11 @@ export class CheckInForm extends Component {
       values.weight = parseInt(values.weight) || null;
       const person = {...values, picture : this.picture};
       var matches = [];
+
+      const potentialMatches = checkInAlgorithm(person, { limit: 20 });
+
       await this.db.collection('missing')
-        .find(checkInAlgorithm(person), { limit: 20 })
+        .find(potentialMatches)
         .toArray()
         .then(people => {
           people.forEach(match => {
@@ -43,6 +45,7 @@ export class CheckInForm extends Component {
             matches.push(match)});
         })
         .catch(err => console.error(`Failed to find documents: ${err}`));
+
       this.info = {...person, found : matches};
       this.nextPage =
         this.info.found.length > 0 ? <Redirect push to={{pathname: `${this.props.match.url}/found`, state: {...this.info}}}/>

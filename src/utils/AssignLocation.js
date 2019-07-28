@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import { stitchClient, db } from '../stitch/database';
-import { PersonToCard } from './PersonFound';
-import {CheckInForm} from './CheckIn';
-import FinishCheckIn from './FinishCheckIn';
 import {BrowserRouter as Router, Route, Redirect, Switch} from 'react-router-dom';
-import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { Form, Field } from 'react-final-form';
-import campsites from './campsites.json';
+import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { PersonToCard } from '../components/PersonFound';
+import {CheckInForm} from '../components/CheckIn';
+import FinishCheckIn from '../components/FinishCheckIn';
+import campsites from '../campsites.json';
+
 var mongodb = require('mongodb');
 
 function campsiteToButton(campsite) {
