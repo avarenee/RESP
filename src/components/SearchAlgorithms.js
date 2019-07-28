@@ -13,11 +13,11 @@ export function checkInAlgorithm(person) {
   return {
            $and : [{first : person.first},
                    {$or : [{sex : person.sex}, {sex : "Undefined"}]},
-                   {$or : [{$and : [{last: person.last},
+                   {$or : [{$or : [{last: person.last},
                                     {$or : [{$and : [{age_min : {$lte : person_age}}, {age_max : {$gte : person_age}}]},
                                             {$and : [{weight_min : {$lte : person.weight}}, {weight_max : {$gte : person.weight}}]},
                                             {$and : [{height_min : {$lte : person.height}}, {height_max : {$gte : person.height}}]}] }]},
-                           {$and : [{$and : [{age_min : {$lte : person_age}}, {age_max : {$gte : person_age}}]},
+                           {$or : [{$and : [{age_min : {$lte : person_age}}, {age_max : {$gte : person_age}}]},
                                     {$or : [{$and : [{weight_min : {$lte : person.weight}}, {weight_max : {$gte : person.weight}}]},
                                             {$and : [{height_min : {$lte : person.height}}, {height_max : {$gte : person.height}}]}] }] }] }
            ]

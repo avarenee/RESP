@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import { stitchClient, db } from '../stitch/database';
-import { personToCard } from './PersonFound';
+import { PersonToCard } from './PersonFound';
+import {CheckInForm} from './CheckIn';
 import FinishCheckIn from './FinishCheckIn';
 import {BrowserRouter as Router, Route, Redirect, Switch} from 'react-router-dom';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { Form, Field } from 'react-final-form';
-import campsites from './campsites.json'
+import campsites from './campsites.json';
+var mongodb = require('mongodb');
 
 function campsiteToButton(campsite) {
   return (<div>
@@ -22,7 +24,7 @@ function campsiteToButton(campsite) {
           </div>);
 }
 
-class AssignCamp extends Component {
+export class AssignCamp extends Component {
   constructor(props) {
     super(props);
     this.state = {...this.props.location.state};
@@ -36,6 +38,12 @@ class AssignCamp extends Component {
     const onSubmit = (values) => {
       this.person = {...this.person, campsite : values.campsite}
       delete this.person.found;
+      delete this.person.reunite;
+      delete this.person.looked_for_by;
+      delete this.person.relation;
+      delete this.person.id_to_delete;
+      delete this.person.looked_for_campsite;
+      delete this.person.looked_for_picture;
       toggle();
     };
     const toggle = () => {
@@ -43,30 +51,47 @@ class AssignCamp extends Component {
       this.setState(this.state);
     };
     const addFound = () => {
+      if(this.state.reunite) {
+        db
+          .collection("missing")
+          .deleteOne({_id : mongodb.ObjectId(this.state.id_to_delete)})
+          .catch(console.error);
+      }
       db
         .collection("found")
         .insertOne(this.person)
-        .then(result =>
-          this.id = result.insertedId)
+        .then(result => {
+          var id = result.insertedId.toHexString();
+          this.nextPage = <Redirect push to={{pathname: `${this.props.match.url}/finish`, state: {...this.person, id: id}}}/>;
+          this.toNext = true;
+          this.setState(this.state);
+        })
         .catch(console.error);
-      this.nextPage = <Redirect push to={{pathname: `${this.props.match.url}/finish`, state: {...this.person, id: this.id}}}/>;
-      this.toNext = true;
-      this.setState(this.state);
     }
     const toRefill = () => {
       this.nextPage = <Redirect push to={{pathname: '/check-in', state: {...this.person}}}/>;
       this.toNext = true;
       this.setState(this.state);
     };
+    const header = this.state.reunite ? <h3>
+                                            Reuniting {this.state.first} with {this.state.looked_for_by} ({this.state.relation})
+                                        </h3>
+                                      : <h3>Assign Location</h3>
+    const images = <div>
+                     <img width="160" height="120" src={this.state.picture}/>{' ----> '}
+                     <img width="160" height="120" src={this.state.looked_for_picture}/>
+                   </div>;
     if(this.toNext) {
       return this.nextPage;
     }
     return(
       <div>
-      <h3>Assign Location</h3>
+      {header}
+      {this.state.reunite && images}
       <div>
       <Form
         onSubmit={onSubmit}
+        initialValues={{campsite : this.state.looked_for_campsite}}
         render={({ handleSubmit, form, values }) => (
         <form onSubmit={handleSubmit}>
           <div>
@@ -82,7 +107,9 @@ class AssignCamp extends Component {
       </div>
         <Modal isOpen={this.modal} toggle={toggle}>
           <ModalHeader>Is this information correct?</ModalHeader>
-          <ModalBody>{personToCard({...this.person})}</ModalBody>
+          <ModalBody>
+            <PersonToCard person={this.person}/>
+          </ModalBody>
           <ModalFooter><button onClick={addFound}>Yes</button>{' '}<button onClick={toRefill}>No</button></ModalFooter>
         </Modal>
       </div>
@@ -91,10 +118,11 @@ class AssignCamp extends Component {
 }
 
 const AssignLocation = ({match}) => (
-      <Router>
+      <Switch>
         <Route exact path={`${match.path}`} component={AssignCamp} />
         <Route path={`${match.path}/finish`} component={FinishCheckIn} />
-      </Router>
-    );
+        <Route path='/check-in' component={CheckInForm} />
+      </Switch>
+  );
 
 export default AssignLocation;

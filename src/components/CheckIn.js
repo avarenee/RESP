@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { stitchClient, db } from '../stitch/database';
 import { loginAnonymous } from '../stitch/auth';
 import { checkInAlgorithm } from './SearchAlgorithms'
-import {BrowserRouter as Router, Route, Redirect} from 'react-router-dom';
+import {BrowserRouter as Router, Route, Switch, Redirect} from 'react-router-dom';
 import {Form, Field} from 'react-final-form';
 
 import Camera from './Camera';
@@ -10,12 +10,11 @@ import Camera from './Camera';
 import PersonFound from './PersonFound';
 import AssignLocation from './AssignLocation';
 
-class CheckInForm extends Component {
+export class CheckInForm extends Component {
   constructor(props) {
     super(props);
-    this.state = {...this.props.location.state,
-      picture: undefined,
-    };
+    this.state = {...this.props.location.state};
+    this.picture = this.state.picture;
     this.toNext = false;
     this.storePictureURI = this.storePictureURI.bind(this);
   }
@@ -24,27 +23,30 @@ class CheckInForm extends Component {
     this.db = db;
   }
   storePictureURI(uri) {
-    this.setState({picture: uri});
+    this.picture = uri;
+    this.setState(this.state);
   }
 
   render() {
     const onSubmit = async (values) => {
-      const pictureURI = this.state.picture;
+      const pictureURI = this.picture;
       values.height = parseInt(values.height) || null;
       values.weight = parseInt(values.weight) || null;
-      const person = {...values, picture : pictureURI};
+      const person = {...values, picture : this.picture};
       var matches = [];
       await this.db.collection('missing')
         .find(checkInAlgorithm(person), { limit: 20 })
         .toArray()
         .then(people => {
-          people.forEach(match => matches.push(match));
+          people.forEach(match => {
+            match._id = match._id.toHexString();
+            matches.push(match)});
         })
         .catch(err => console.error(`Failed to find documents: ${err}`));
       this.info = {...person, found : matches};
       this.nextPage =
         this.info.found.length > 0 ? <Redirect push to={{pathname: `${this.props.match.url}/found`, state: {...this.info}}}/>
-                                   : <Redirect push to={{pathname: `${this.props.match.url}/assign-location`, state: {...this.info}}}/>;
+                                   : <Redirect push to={{pathname: `${this.props.match.url}/assign-location`, state: person}}/>;
       this.toNext = true;
       this.setState(this.state);
     }
@@ -173,11 +175,11 @@ class CheckInForm extends Component {
 }
 
 const CheckIn = ({match}) => (
-      <Router>
+      <Switch>
         <Route exact path={`${match.path}`} component={CheckInForm} />
         <Route path={`${match.path}/found`} component={PersonFound} />
         <Route path={`${match.path}/assign-location`} component={AssignLocation} />
-      </Router>
+      </Switch>
     );
 
 export default CheckIn;

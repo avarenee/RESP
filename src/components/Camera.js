@@ -40,6 +40,7 @@ export default class Camera extends Component {
     this.ctx.drawImage(this.video, 0, 0, width, height);
     const dataURL = this.canvas.toDataURL('image/jpeg');
     this.video.srcObject.getTracks()[0].stop();
+    this.setState({buttons : null});
     this.props.storePicture(dataURL);
   }
   getPicture() {

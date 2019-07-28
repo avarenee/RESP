@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react';
-import {BrowserRouter as Router, Route, Redirect} from 'react-router-dom';
+import {BrowserRouter as Router, Route, Redirect, Switch} from 'react-router-dom';
 import {Form, Field} from 'react-final-form';
 import { stitchClient, db } from '../stitch/database';
 import { loginAnonymous } from '../stitch/auth';
@@ -97,12 +97,11 @@ const AdvancedSearch = props => (
   </Fragment>
 );
 
-class SearchForm extends Component {
+export class SearchForm extends Component {
   constructor(props) {
     super(props);
-    this.state = {...this.props.location.state,
-      picture: undefined,
-    };
+    this.state = {...this.props.location.state};
+    this.picture = this.state.picture;
     this.advanced = false;
     this.toNext = false;
     this.storePictureURI = this.storePictureURI.bind(this);
@@ -112,7 +111,8 @@ class SearchForm extends Component {
     this.db = db;
   }
   storePictureURI(uri) {
-    this.setState({picture: uri});
+    this.picture = uri;
+    this.setState(this.state);
   }
   render() {
     const showAdvanced = () => {this.advanced = !this.advanced ; this.setState(this.state)};
@@ -123,8 +123,8 @@ class SearchForm extends Component {
       values.height_max = parseInt(values.height_max) || null;
       values.weight_min = parseInt(values.weight_min) || null;
       values.weight_max = parseInt(values.weight_max) || null;
-      const pictureURI = this.state.picture;
-      const person = {...values, picture : pictureURI};
+      const picture = this.picture;
+      const person = {...values, picture : picture, looked_for_by : this.state.looked_for_by, looked_for_by_id: this.state.looked_for_by_id};
       const algorithm = this.advanced ? advancedSearchAlgorithm : searchAlgorithm;
       var matches = [];
       await this.db.collection('found')
@@ -137,7 +137,7 @@ class SearchForm extends Component {
       this.info = {...person, found : matches};
       this.nextPage =
         this.info.found.length > 0 ? <Redirect push to={{pathname: `${this.props.match.url}/found`, state: {...this.info}}}/>
-                                   : <Redirect push to={{pathname: `${this.props.match.url}/add-missing`, state: {...this.info}}}/>;
+                                   : <Redirect push to={{pathname: `${this.props.match.url}/add-missing`, state: {...person}}}/>;
       this.toNext = true;
       this.setState(this.state);
     }
@@ -246,11 +246,11 @@ class SuccessfulSearch extends Component {
 }
 
 const Search = ({match}) => (
-      <Router>
+      <Switch>
         <Route exact path={`${match.path}`} component={SearchForm} />
         <Route path={`${match.path}/found`} component={SuccessfulSearch} />
         <Route path={`${match.path}/add-missing`} component={AddMissing} />
-      </Router>
+      </Switch>
     );
 
 export default Search;
