@@ -1,0 +1,35 @@
+.respform {
+  background-color: white;
+  width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+h3 {
+  text-align: center;
+}
+
+video {
+  width: 240px;
+  height: 240px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.col {
+  float: left;
+  width: 50%;
+  padding: 40px;
+}
+
+.container:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.containercamera {
+  float: right;
+}

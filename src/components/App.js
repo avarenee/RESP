@@ -1,17 +1,23 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import {BrowserRouter as Router, Route, Link, Switch} from 'react-router-dom';
 import CheckIn from './CheckIn';
 import Search from './Search';
-import AssignLocation from '../utils/AssignLocation';
 import { loginAnonymous } from './../stitch/auth';
 import { stitchClient, db } from '../stitch/database';
+import resp from './../assets/RESPlogo.png';
+import './../css/main.css';
 
 export function Home() {
   return(
       <div>
-        <Link to='/check-in'><button type="button">New Check-in</button></Link>
-      <p></p>
-        <Link to='/search'><button type="button">New Search</button></Link>
+        <img alt="Logo not available" src={resp} />
+        <h1>RESP</h1>
+        <h2>Responsive Emotional Support Protocols for First Responders</h2>
+        <div class="buttons">
+          <Link to='/check-in'><button class="button checkin" type="button">New Check-in</button></Link>
+        <p></p>
+          <Link to='/search'><button class="button search" type="button">New Search</button></Link>
+        </div>
       </div>
   );
 }
@@ -32,6 +38,7 @@ class App extends Component {
   }
   render() {
     return(
+      <body className="home">
         <Router>
           <Switch>
             <Route exact path='/' component={Home}/>
@@ -39,6 +46,7 @@ class App extends Component {
             <Route path='/search' component={Search}/>
           </Switch>
         </Router>
+      </body>
     );
   }
 }

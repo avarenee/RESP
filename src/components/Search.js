@@ -1,10 +1,10 @@
 import React, {Component, Fragment} from 'react';
-import {BrowserRouter as Router, Route, Redirect, Switch} from 'react-router-dom';
+import {Route, Redirect, Switch} from 'react-router-dom';
 import {Form, Field} from 'react-final-form';
 import SearchSuccessful from './SearchSuccessful';
 import { stitchClient, db } from '../stitch/database';
-import { loginAnonymous } from '../stitch/auth';
 import { searchAlgorithm, advancedSearchAlgorithm } from '../utils/SearchAlgorithms';
+import './../css/forms.css';
 
 import AddMissing from './AddMissing'
 
@@ -148,7 +148,8 @@ export class SearchForm extends Component {
     return(
         <div>
         <h3>Search</h3>
-        <Camera storePicture={(uri) => this.storePictureURI(uri)}/>
+        <div className="container">
+        <div className="col">
         <Form
           onSubmit={onSubmit}
           initialValues={{first : this.state.first,
@@ -234,16 +235,23 @@ export class SearchForm extends Component {
             </form>
           )}/>
         </div>
+        <div className="col">
+          <Camera storePicture={(uri) => this.storePictureURI(uri)}/>
+        </div>
+        </div>
+        </div>
     );
   }
 }
 
 const Search = ({match}) => (
+    <body className="respform">
       <Switch>
         <Route exact path={`${match.path}`} component={SearchForm} />
         <Route path={`${match.path}/found`} component={SearchSuccessful} />
         <Route path={`${match.path}/add-missing`} component={AddMissing} />
       </Switch>
+    </body>
     );
 
 export default Search;

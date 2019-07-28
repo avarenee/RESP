@@ -1,5 +1,5 @@
-import React, {Component, Fragment} from 'react';
-import { BrowserRouter as Router, Route, Redirect, Link, Switch } from 'react-router-dom';
+import React, {Component} from 'react';
+import { Route, Redirect, Switch } from 'react-router-dom';
 import { db } from '../stitch/database';
 import { SearchToCard } from './PersonFound';
 import FinishSearch from './FinishSearch';
@@ -45,7 +45,6 @@ export class Missing extends Component {
     this.setState(this.state);
   }
   render() {
-    const show = false;
     const person = {...this.state};
     if(this.toNext) {
       return <Redirect to={{pathname : `${this.props.match.path}/finish`, state : person}}/>;

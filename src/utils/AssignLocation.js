@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { stitchClient, db } from '../stitch/database';
-import {BrowserRouter as Router, Route, Redirect, Switch} from 'react-router-dom';
+import { db } from '../stitch/database';
+import { Route, Redirect, Switch} from 'react-router-dom';
 import { Form, Field } from 'react-final-form';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { PersonToCard } from '../components/PersonFound';
@@ -79,8 +79,8 @@ export class AssignCamp extends Component {
                                         </h3>
                                       : <h3>Assign Location</h3>
     const images = <div>
-                     <img width="160" height="120" src={this.state.picture}/>{' ----> '}
-                     <img width="160" height="120" src={this.state.looked_for_picture}/>
+                     <img width="160" height="120" alt="Picture not available" src={this.state.picture}/>{' ----> '}
+                     <img width="160" height="120" alt="Picture not available" src={this.state.looked_for_picture}/>
                    </div>;
     if(this.toNext) {
       return this.nextPage;

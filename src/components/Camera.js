@@ -52,8 +52,8 @@ export default class Camera extends Component {
   }
   render() {
     return(
-      <div>
-        <video width="480" height="480" className='camera' poster={camera} onClick={this.getCamera}></video>
+      <div className="containercamera">
+        <video className="camera" poster={camera} onClick={this.getCamera}></video>
         <p></p>
         {this.state.buttons}
       </div>

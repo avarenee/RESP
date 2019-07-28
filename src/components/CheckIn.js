@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
-import {BrowserRouter as Router, Route, Switch, Redirect} from 'react-router-dom';
+import {Route, Switch, Redirect} from 'react-router-dom';
 import {Form, Field} from 'react-final-form';
 import Camera from './Camera';
 import PersonFound from './PersonFound';
-import { loginAnonymous } from '../stitch/auth';
-import { stitchClient, db } from '../stitch/database';
+import { db } from '../stitch/database';
 import { checkInAlgorithm } from '../utils/SearchAlgorithms'
 import AssignLocation from '../utils/AssignLocation';
+import './../css/forms.css';
 
 export class CheckInForm extends Component {
   constructor(props) {
@@ -16,10 +16,7 @@ export class CheckInForm extends Component {
     this.toNext = false;
     this.storePictureURI = this.storePictureURI.bind(this);
   }
-  componentDidMount() {
-    this.client = stitchClient;
-    this.db = db;
-  }
+
 
   storePictureURI(uri) {
     this.picture = uri;
@@ -28,7 +25,6 @@ export class CheckInForm extends Component {
 
   render() {
     const onSubmit = async (values) => {
-      const pictureURI = this.picture;
       values.height = parseInt(values.height) || null;
       values.weight = parseInt(values.weight) || null;
       const person = {...values, picture : this.picture};
@@ -36,7 +32,8 @@ export class CheckInForm extends Component {
 
       const potentialMatches = checkInAlgorithm(person, { limit: 20 });
 
-      await this.db.collection('missing')
+      await db
+        .collection('missing')
         .find(potentialMatches)
         .toArray()
         .then(people => {
@@ -58,8 +55,9 @@ export class CheckInForm extends Component {
     }
     return(
         <div>
-        <h3>Check In</h3>
-        <Camera storePicture={(uri) => this.storePictureURI(uri)}/>
+          <h3>Check In</h3>
+        <div className="container">
+        <div className="col">
         <Form
           onSubmit={onSubmit}
           initialValues={{first : this.state.first,
@@ -158,31 +156,29 @@ export class CheckInForm extends Component {
                 />
               </div>
             </div>
-            <div className="buttons">
                 <button type="submit" disabled={submitting || pristine}>
                   Next
                 </button>
-                <button
-                  type="button"
-                  onClick={form.reset}
-                  disabled={submitting || pristine}
-                >
-                  Reset
-                </button>
-              </div>
             </form>
           )}/>
+          </div>
+          <div className="col">
+            <Camera storePicture={(uri) => this.storePictureURI(uri)}/>
+          </div>
+        </div>
         </div>
     );
   }
 }
 
 const CheckIn = ({match}) => (
+    <body className="respform">
       <Switch>
         <Route exact path={`${match.path}`} component={CheckInForm} />
         <Route path={`${match.path}/found`} component={PersonFound} />
         <Route path={`${match.path}/assign-location`} component={AssignLocation} />
       </Switch>
-    );
+    </body>
+);
 
 export default CheckIn;
