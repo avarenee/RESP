@@ -1,9 +1,9 @@
 import React, {Component, Fragment} from 'react';
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
-import { db } from '../stitch/database';
-import { SearchToCard } from './PersonFound';
 import { Home } from './App';
 import { Search } from './Search';
+import { SearchToCard } from './PersonFound';
+import { db } from '../stitch/database';
 
 export default class FinishSearch extends Component {
   constructor(props) {

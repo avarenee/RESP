@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import camera from './camera.jpg';
+import camera from '../assets/camera.jpg';
 
 export default class Camera extends Component {
   constructor(props) {

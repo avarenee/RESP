@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import {Link, Route, Redirect, Switch} from 'react-router-dom';
-import { PersonToCard } from './PersonFound';
-import { db } from '../stitch/database';
 import {Home} from './App';
+import { PersonToCard } from './PersonFound';
 import {SearchForm} from './Search';
+import { db } from '../stitch/database';
 
 class Finish extends Component {
   constructor(props) {

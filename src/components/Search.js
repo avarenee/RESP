@@ -3,7 +3,7 @@ import {BrowserRouter as Router, Route, Redirect, Switch} from 'react-router-dom
 import {Form, Field} from 'react-final-form';
 import { stitchClient, db } from '../stitch/database';
 import { loginAnonymous } from '../stitch/auth';
-import { searchAlgorithm, advancedSearchAlgorithm } from './SearchAlgorithms';
+import { searchAlgorithm, advancedSearchAlgorithm } from '../utils/SearchAlgorithms';
 
 import AddMissing from './AddMissing'
 
