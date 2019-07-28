@@ -1,6 +1,7 @@
 import React, {Component, Fragment} from 'react';
 import {BrowserRouter as Router, Route, Redirect, Switch} from 'react-router-dom';
 import {Form, Field} from 'react-final-form';
+import SearchSuccessful from './SearchSuccessful';
 import { stitchClient, db } from '../stitch/database';
 import { loginAnonymous } from '../stitch/auth';
 import { searchAlgorithm, advancedSearchAlgorithm } from '../utils/SearchAlgorithms';
@@ -237,18 +238,10 @@ export class SearchForm extends Component {
   }
 }
 
-class SuccessfulSearch extends Component {
-  render() {
-    return(
-      <h3>Successful Search</h3>
-    );
-  }
-}
-
 const Search = ({match}) => (
       <Switch>
         <Route exact path={`${match.path}`} component={SearchForm} />
-        <Route path={`${match.path}/found`} component={SuccessfulSearch} />
+        <Route path={`${match.path}/found`} component={SearchSuccessful} />
         <Route path={`${match.path}/add-missing`} component={AddMissing} />
       </Switch>
     );
