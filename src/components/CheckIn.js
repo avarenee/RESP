@@ -195,7 +195,7 @@ const MyField = styled(Field)`
   border-bottom: 3px solid #160f6f;
   margin-bottom: 30px;
   padding: 5px 0px;
-  width: 300px;
+  width: 400px;
   background-color: #b0caed;
 `;
 

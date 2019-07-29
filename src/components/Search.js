@@ -13,9 +13,8 @@ import Camera from './Camera';
 
 const AdvancedSearch = props => (
   <Fragment>
-  <div>
+  <Div2>
     <label>Age Range</label>
-    {' '}
     0
     <Field
       name="age_min"
@@ -32,13 +31,13 @@ const AdvancedSearch = props => (
       max="100"
     />
     100
-    {'    '}
+    {'   '}
     {props.values.age_min || '0'}
     {' - '}
     {props.values.age_max || '100'}
     {' '}
-  </div>
-  <div>
+  </Div2>
+  <Div2>
     <label>Height</label>
     {' '}
     0 cm
@@ -62,8 +61,8 @@ const AdvancedSearch = props => (
     {' - '}
     {props.values.height_max || '225'}
     {' cm'}
-  </div>
-  <div>
+  </Div2>
+  <Div2>
     <label>Weight</label>
     {' '}
     0 kg
@@ -87,7 +86,7 @@ const AdvancedSearch = props => (
     {' - '}
     {props.values.weight_max || '200'}
     {' kg'}
-  </div>
+  </Div2>
   <div>
     <label>Description</label>
     <MyField
@@ -260,12 +259,17 @@ const Div = styled.div`
   padding-bottom: 20px;
 `;
 
+const Div2 = styled.div`
+  min-width: 600px;
+  margin-bottom: 40px;
+`;
+
 const MyField = styled(Field)`
   border: none;
   border-bottom: 3px solid tomato;
   margin-bottom: 30px;
   padding: 5px 0px;
-  min-width: 300px;
+  min-width: 400px;
   background-color: #ffdad4;
 `;
 

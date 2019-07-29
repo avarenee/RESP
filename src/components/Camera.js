@@ -63,6 +63,7 @@ export default class Camera extends Component {
 
 const Div = styled.div`
   width: 240px;
+  height: 300px;
   margin: default;
   float: right;
   text-align: center;

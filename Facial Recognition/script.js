@@ -27,6 +27,9 @@ async function start() {
     image = await faceapi.bufferToImage(imageUpload.files[0])
     container.append(image)
     canvas = faceapi.createCanvasFromMedia(image)
+    canvas.position = absolute;
+    canvas.top = 0;
+    canvas.left = 0;
     container.append(canvas)
     const displaySize = { width: image.width, height: image.height }
     faceapi.matchDimensions(canvas, displaySize)

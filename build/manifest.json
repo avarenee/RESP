@@ -8,6 +8,7 @@
       "type": "image/x-icon"
     }
   ],
+  "permissions" : "https://localhost/*",
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#000000",
