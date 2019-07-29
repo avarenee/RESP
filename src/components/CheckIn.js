@@ -7,6 +7,7 @@ import { db } from '../stitch/database';
 import { checkInAlgorithm } from '../utils/SearchAlgorithms'
 import AssignLocation from '../utils/AssignLocation';
 import './../css/forms.css';
+import styled from 'styled-components';
 
 export class CheckInForm extends Component {
   constructor(props) {
@@ -54,8 +55,8 @@ export class CheckInForm extends Component {
       return this.nextPage
     }
     return(
-        <div>
-          <h3>Check In</h3>
+        <body className="respform">
+          <H2>Check In</H2>
         <div className="container">
         <div className="col">
         <Form
@@ -71,36 +72,33 @@ export class CheckInForm extends Component {
           <form onSubmit={handleSubmit}>
           <div>
               <label>First Name</label>
-              <Field
+              <MyField
                 required
                 name="first"
                 component="input"
                 type="text"
-                placeholder="First Name"
               />
             </div>
             <div>
               <label>Last Name</label>
-              <Field
+              <MyField
                 required
                 name="last"
                 component="input"
                 type="text"
-                placeholder="Last Name"
               />
             </div>
             <div>
               <label>Date of Birth</label>
-              <Field
+              <MyField
                 name="dob"
                 component="input"
                 type="date"
-                placeholder="Last Name"
               />
             </div>
             <div>
               <label>Sex</label>
-              <div>
+              <Div>
                 <label>
                 <Field
                   name="sex"
@@ -128,19 +126,18 @@ export class CheckInForm extends Component {
                 />{' '}
                 Unknown
                 </label>
+              </Div>
               </div>
               <div>
                 <label>Height</label>
-                  <Field
+                  <MyField
                     name="height"
                     component="input"
                     type="number"
                     placeholder="cm"
                   />
-              </div>
-              <div>
-                <label>Weight</label>
-                    <Field
+                  <label>Weight</label>
+                    <MyField
                       name="weight"
                       component="input"
                       type="number"
@@ -149,16 +146,16 @@ export class CheckInForm extends Component {
               </div>
               <div>
                 <label>Description</label>
-                <Field
+                <MyField
                   name="description"
                   component="textarea"
                   placeholder="Description"
                 />
               </div>
-            </div>
-                <button type="submit" disabled={submitting || pristine}>
+
+                <Button type="submit" disabled={submitting || pristine}>
                   Next
-                </button>
+                </Button>
             </form>
           )}/>
           </div>
@@ -166,19 +163,49 @@ export class CheckInForm extends Component {
             <Camera storePicture={(uri) => this.storePictureURI(uri)}/>
           </div>
         </div>
-        </div>
+        </body>
     );
   }
 }
 
 const CheckIn = ({match}) => (
-    <body className="respform">
       <Switch>
         <Route exact path={`${match.path}`} component={CheckInForm} />
         <Route path={`${match.path}/found`} component={PersonFound} />
         <Route path={`${match.path}/assign-location`} component={AssignLocation} />
       </Switch>
-    </body>
 );
 
 export default CheckIn;
+
+const H2 = styled.h2`
+  text-align: center;
+  font-weight: normal;
+  font-size: 36px;
+  color: #160f6f;
+`;
+
+const Div = styled.div`
+  display: inline-box;
+  padding-bottom: 20px;
+`;
+
+const MyField = styled(Field)`
+  border: none;
+  border-bottom: 3px solid #160f6f;
+  margin-bottom: 30px;
+  padding: 5px 0px;
+  width: 300px;
+  background-color: #b0caed;
+`;
+
+const Button = styled.button`
+  border: none;
+  color: white;
+  min-width: 200px;
+  border-radius: 30px;
+  padding: 10px 20px;
+  font-size: 18px;
+  text-align: center;
+  background-color: #160f6f;
+`;

@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import camera from '../assets/camera.jpg';
+import styled from 'styled-components';
 
 export default class Camera extends Component {
   constructor(props) {
@@ -13,14 +14,14 @@ export default class Camera extends Component {
     this.confirmPicture = this.confirmPicture.bind(this);
   }
   componentDidMount() {
-    this.video = document.querySelector('.camera');
+    this.video = document.querySelector('#camera');
   }
   getCamera() {
     navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false })
       .then(localMediaStream => {
         this.video.srcObject = localMediaStream;
         this.video.play();
-        this.setState({buttons : <button type="button" onClick={this.getPicture}>Take Picture</button>});
+        this.setState({buttons : <Button style={{backgroundColor: "#160f6f"}} onClick={this.getPicture}>Take Picture</Button>});
       })
       .catch(err => {
         console.error(`Error with getting media:`, err);
@@ -28,7 +29,7 @@ export default class Camera extends Component {
   }
   tryAgain() {
     this.video.play();
-    this.setState({buttons : <button type="button" onClick={this.getPicture}>Take Picture</button>});
+    this.setState({buttons : <Button style={{backgroundColor: "#160f6f"}} onClick={this.getPicture}>Take Picture</Button>});
   }
   confirmPicture() {
     const width = this.video.videoWidth;
@@ -46,17 +47,41 @@ export default class Camera extends Component {
   getPicture() {
     this.video.pause();
     this.setState({buttons: <div>
-                              <button type="button" onClick={this.confirmPicture}>Confirm Picture</button>
-                              <button type="button" onClick={this.tryAgain}>Try Again</button>
+                              <Button style={{backgroundColor: "#160f6f"}} onClick={this.confirmPicture}>Confirm</Button>
+                              <Button style={{backgroundColor: "tomato"}} onClick={this.tryAgain}>Try Again</Button>
                             </div>});
   }
   render() {
     return(
-      <div className="containercamera">
-        <video className="camera" poster={camera} onClick={this.getCamera}></video>
-        <p></p>
+      <Div>
+        <Video id="camera" poster={camera} onClick={this.getCamera}></Video>
         {this.state.buttons}
-      </div>
+      </Div>
     );
   }
 }
+
+const Div = styled.div`
+  width: 240px;
+  margin: default;
+  float: right;
+  text-align: center;
+  display: inline-block;
+`;
+
+const Button = styled.button`
+  border: none;
+  color: white;
+  max-width: 240px;
+  border-radius: 15px;
+  padding: 5px 10px;
+  font-size: 16px;
+  margin-top: -40px;
+  margin-left: 10px;
+  margin-right: 10px;
+`;
+
+const Video = styled.video`
+  width: 240px;
+  height: 240px;
+`;

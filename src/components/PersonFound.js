@@ -7,6 +7,7 @@ import { db } from './../stitch/database';
 var mongodb = require('mongodb');
 
 export function SearchToCard(props) {
+  const cardSelect = props.cardSelect ? props.cardSelect : () => {return true};
   const cardAttributes = [`Name: ${props.person.first} ${props.person.last}`,
                           `Sex: ${props.person.sex}`,
                           (props.person.age_min || props.person.age_max) && `Age: ${props.person.age_min}-${props.person.age_max} yrs`,
@@ -16,7 +17,7 @@ export function SearchToCard(props) {
                           props.person.looked_for_by && `Looked for By: ${props.person.looked_for_by}`];
   return (
     <div>
-      <Card onClick={() => props.cardSelect(props.person)}>
+      <Card onClick={() => cardSelect(props.person)}>
         <CardImg width="320" height="240" src={props.person.picture} alt="No picture available"/>
         <CardBody>
           {cardAttributes.map(attribute => <CardText>{attribute}</CardText>)}
@@ -27,6 +28,7 @@ export function SearchToCard(props) {
 }
 
 export function PersonToCard(props) {
+  const cardSelect = props.cardSelect ? props.cardSelect : () => {return true};
   const cardAttributes = [`Name: ${props.person.first} ${props.person.last}`,
                           `Sex: ${props.person.sex}`,
                           props.person.dob && `Date of Birth: ${props.person.dob}`,
@@ -36,7 +38,7 @@ export function PersonToCard(props) {
                           props.person.campsite && `Currently assigned to : Campsite ${props.person.campsite}`];
   return (
     <div>
-      <Card onClick={() => props.cardSelect(props.person)}>
+      <Card onClick={() => cardSelect(props.person)}>
         <CardImg width="320" height="240" src={props.person.picture} alt="No picture available"/>
         <CardBody>
           {cardAttributes.map(attribute => <CardText>{attribute}</CardText>)}

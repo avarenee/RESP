@@ -5,6 +5,7 @@ import SearchSuccessful from './SearchSuccessful';
 import { stitchClient, db } from '../stitch/database';
 import { searchAlgorithm, advancedSearchAlgorithm } from '../utils/SearchAlgorithms';
 import './../css/forms.css';
+import styled from 'styled-components';
 
 import AddMissing from './AddMissing'
 
@@ -89,7 +90,7 @@ const AdvancedSearch = props => (
   </div>
   <div>
     <label>Description</label>
-    <Field
+    <MyField
       name="description"
       component="textarea"
       placeholder="Description"
@@ -146,8 +147,8 @@ export class SearchForm extends Component {
       return this.nextPage;
     }
     return(
-        <div>
-        <h3>Search</h3>
+        <body className="respform">
+        <H2>Search</H2>
         <div className="container">
         <div className="col">
         <Form
@@ -166,27 +167,25 @@ export class SearchForm extends Component {
           <form onSubmit={handleSubmit}>
             <div>
               <label>First Name</label>
-              <Field
+              <MyField
                 required
                 name="first"
                 component="input"
                 type="text"
-                placeholder="First Name"
               />
             </div>
             <div>
               <label>Last Name</label>
-              <Field
+              <MyField
                 required
                 name="last"
                 component="input"
                 type="text"
-                placeholder="Last Name"
               />
             </div>
             <div>
               <label>Sex</label>
-              <div>
+              <Div>
                 <label>
                 <Field
                   name="sex"
@@ -214,23 +213,16 @@ export class SearchForm extends Component {
                 />{' '}
                 Unknown
                 </label>
-              </div>
+              </Div>
             </div>
             <div>
-              <button type="button" onClick={showAdvanced}>Advanced Search</button>
+              <AdvancedButton type="button" onClick={showAdvanced}>Advanced Search ⌄</AdvancedButton>
             </div>
             {this.advanced && <AdvancedSearch values={{...values}}/>}
-            <div className="buttons">
-                <button type="submit" disabled={submitting || pristine}>
+            <div>
+                <Button type="submit" disabled={submitting || pristine}>
                   Search
-                </button>
-                <button
-                  type="button"
-                  onClick={form.reset}
-                  disabled={submitting || pristine}
-                >
-                  Reset
-                </button>
+                </Button>
               </div>
             </form>
           )}/>
@@ -239,7 +231,7 @@ export class SearchForm extends Component {
           <Camera storePicture={(uri) => this.storePictureURI(uri)}/>
         </div>
         </div>
-        </div>
+        </body>
     );
   }
 }
@@ -255,3 +247,45 @@ const Search = ({match}) => (
     );
 
 export default Search;
+
+const H2 = styled.h2`
+  text-align: center;
+  font-weight: normal;
+  font-size: 36px;
+  color: tomato;
+`;
+
+const Div = styled.div`
+  display: inline-box;
+  padding-bottom: 20px;
+`;
+
+const MyField = styled(Field)`
+  border: none;
+  border-bottom: 3px solid tomato;
+  margin-bottom: 30px;
+  padding: 5px 0px;
+  min-width: 300px;
+  background-color: #ffdad4;
+`;
+
+const Button = styled.button`
+  border: none;
+  color: white;
+  min-width: 200px;
+  border-radius: 30px;
+  padding: 10px 20px;
+  font-size: 18px;
+  text-align: center;
+  background-color: tomato;
+`;
+
+const AdvancedButton = styled.button`
+  border: none;
+  color: tomato;
+  background-color: #fff;
+  padding-left: 0px;
+  padding-bottom: 20px;
+  padding-top: 0px;
+  font-size: 24px;
+`;

@@ -1,17 +1,8 @@
 .respform {
-  background-color: white;
   width: 800px;
+  margin-top: 40px;
   margin-left: auto;
   margin-right: auto;
-}
-
-h3 {
-  text-align: center;
-}
-
-video {
-  width: 240px;
-  height: 240px;
 }
 
 * {
@@ -30,6 +21,10 @@ video {
   clear: both;
 }
 
-.containercamera {
-  float: right;
+Field, label {
+  display: block;
+}
+
+label {
+  color: #160f6f;
 }
