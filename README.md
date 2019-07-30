@@ -1,71 +1,26 @@
 ![logo.png](https://raw.githubusercontent.com/avarenee/RESP/master/src/assets/RESPlogo.png)
 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**RESP -RESPONSIVE EMOTIONAL SUPPORT PROTOCOLS**
 
-## Available Scripts
+RESP is an early intervention application with facial recognition  for first responders  to connect loved ones  after a Natural Disaster on ways to minimize the emotional consequences  and helping  families cope  in ways that is conducive to mental health and wellbeing.
 
-In the project directory, you can run:
+**SOLUTION**
 
-### `npm start`
+RESP is an early intervention application for first responders with facial recognition and accessible offline platform that connect loved ones  after a natural disaster on ways to minimize the emotional consequences and helping families cope in ways that is conducive to mental health and wellbeing. 
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+RESP - Questionnaire is intended for the first responder to fill out, inspired by the recommended questions asked for AMBER Alert system. This information is not only intended to establish a rapport with the disaster survivor, but populated an anonymous database to allow the custom ML models to consume.  
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+Once first responders fill out a questionnaire, they are added to the Catalog and considered 'checked-in'. The survivor may  state that they are seeking family members or friends, and if a match is found between their query and the Catalog, the survivor can be notified and reassured. The catalog keeps track of a census, geolocation based on their responses.
 
-### `npm test`
+How we built it: React, MongoDb Stitch, Service Worker to facilitate offline sync and IBM cloud.
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Potential impact:  RESP can help  a community to reconnect with loved ones  to reduce the Emotional Impact of a Natural Disaster for long-term prevention.
 
-### `npm run build`
+**ROADMAP**
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
