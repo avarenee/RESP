@@ -15,7 +15,7 @@ Once first responders fill out a questionnaire, they are added to the Catalog an
 
 How we built it: React, MongoDb Stitch, Service Worker to facilitate offline sync and IBM cloud.
 
-Currnetly hosted on Bluemix: https://resp.mybluemix.net/
+Currently hosted on Bluemix: https://resp.mybluemix.net/
 
 Potential impact:  RESP can help  a community to reconnect with loved ones  to reduce the Emotional Impact of a Natural Disaster for long-term prevention.
 
