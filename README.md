@@ -19,10 +19,6 @@ Currently hosted on Bluemix: https://resp.mybluemix.net/
 
 Potential impact:  RESP can help  a community to reconnect with loved ones  to reduce the Emotional Impact of a Natural Disaster for long-term prevention.
 
-**ROADMAP**
-
-![roadmap](https://raw.githubusercontent.com/avarenee/RESP/master/src/assets/timeline.png)
-
 
 
 
