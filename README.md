@@ -3,7 +3,7 @@
 
 **RESP -RESPONSIVE EMOTIONAL SUPPORT PROTOCOLS**
 
-RESP is an early intervention application with facial recognition  for first responders  to connect loved ones  after a Natural Disaster on ways to minimize the emotional consequences  and helping  families cope  in ways that is conducive to mental health and wellbeing.
+RESP is an early intervention application for first responders  to reconnect loved ones  after a natural disaster. RESP aims to minimize the psychological damage caused by natural disaster, fostering community mental wellness.
 
 **SOLUTION**
 
