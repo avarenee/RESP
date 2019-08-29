@@ -1,9 +1,9 @@
-![logo.png](https://raw.githubusercontent.com/avarenee/RESP/master/src/assets/RESPlogo.png)
+<img src="https://raw.githubusercontent.com/avarenee/RESP/master/src/assets/RESPlogo.png" width="300" height="300" style="text-align : center">
 
 
-**RESP -RESPONSIVE EMOTIONAL SUPPORT PROTOCOLS**
+**RESP - RESPONSIVE EMOTIONAL SUPPORT PROTOCOLS**
 
-RESP is an early intervention application for first responders  to reconnect loved ones  after a natural disaster. RESP aims to minimize the psychological damage caused by natural disaster, fostering community mental wellness.
+RESP is an application for use by first responders to reconnect loved ones after a natural disaster. RESP aims to minimize the psychological damage caused by natural disaster, fostering community mental wellness.
 
 **SOLUTION**
 
